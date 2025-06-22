@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FAQ with Copyable Answers</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f2f2f2;
+    }
+    .faq-item {
+      margin-bottom: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    summary {
+      font-weight: bold;
+      font-size: 1.1em;
+      cursor: pointer;
+      outline: none;
+    }
+    .answer {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+    .answer pre {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+    }
+    button.copy-btn {
+      margin-top: 10px;
+      padding: 6px 12px;
+      font-size: 0.9em;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Machine Learning Practicals</h2>
+
+  <div class="faq-item">
+    <details>
+      <summary>Practical 1</summary>
+      <div class="answer">
+        <pre id="answer1"><code>
+import numpy as np 
+import matplotlib.pyplot as plt 
+import pandas as pd
+dataset = pd.read_csv('salary.csv') 
+X = dataset[['YearsExperience']].values
+y = dataset[['Salary']].values
+from sklearn.model_selection import train_test_split 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 1/3, random_state = 0) 
+ 
+from sklearn.linear_model import LinearRegression 
+regressor = LinearRegression() 
+regressor.fit(X_train, y_train) 
+y_pred = regressor.predict(X_test) 
+plt.scatter(X_train, y_train, color = 'red') 
+plt.plot(X_train, regressor.predict(X_train), color = 'blue') 
+plt.title('Salary vs Experience (Training set)') 
+plt.xlabel('Years of Experience') 
+plt.ylabel('Salary') 
+plt.show() 
+plt.scatter(X_test, y_test, color = 'red') 
+plt.plot(X_train, regressor.predict(X_train), color = 'blue') 
+plt.title('Salary vs Experience (Test set)') 
+plt.xlabel('Years of Experience')
+plt.ylabel('Salary') 
+plt.show()
+        </code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer1')">Copy</button>
+      </div>
+    </details>
+  </div>
+
+  <div class="faq-item">
+    <details>
+      <summary>Practical 2: Linear regression</summary>
+      <div class="answer">
+        <pre id="answer2"><code>
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.decomposition import PCA
+import seaborn as sns
+dataset = pd.read_csv('IRIS.csv')
+print("Dataset Columns:", dataset.columns)
+if 'Id' in dataset.columns:
+ dataset.drop('Id', axis=1, inplace=True)
+X = dataset.iloc[:, :-1].values
+y = dataset.iloc[:, -1].values
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+y = le.fit_transform(y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+classifier = LogisticRegression(random_state=0)
+classifier.fit(X_train, y_train)
+y_pred = classifier.predict(X_test)
+cm = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:\n", cm)
+pca = PCA(n_components=2)
+X_train_pca = pca.fit_transform(X_train)
+X_test_pca = pca.transform(X_test)
+from matplotlib.colors import ListedColormap
+X_set, y_set = X_train_pca, y_train
+X1, X2 = np.meshgrid(np.arange(start=X_set[:, 0].min()-1, stop=X_set[:, 0].max()+1, step=0.01),
+ np.arange(start=X_set[:, 1].min()-1, stop=X_set[:, 1].max()+1, step=0.01))
+plt.contourf(X1, X2, classifier.predict(pca.inverse_transform(np.array([X1.ravel(), 
+X2.ravel()]).T)).reshape(X1.shape),
+ alpha=0.75, cmap=ListedColormap(('red', 'green')))
+plt.xlim(X1.min(), X1.max())
+plt.ylim(X2.min(), X2.max())
+for i, j in enumerate(np.unique(y_set)):
+ plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
+ c=ListedColormap(('red', 'green'))(i), label=j)
+plt.title('Logistic Regression (Training set with PCA)')
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+plt.legend()
+plt.show()
+X_set, y_set = X_test_pca, y_test
+X1, X2 = np.meshgrid(np.arange(start=X_set[:, 0].min()-1, stop=X_set[:, 0].max()+1, step=0.01),
+ np.arange(start=X_set[:, 1].min()-1, stop=X_set[:, 1].max()+1, step=0.01))
+plt.contourf(X1, X2, classifier.predict(pca.inverse_transform(np.array([X1.ravel(), 
+X2.ravel()]).T)).reshape(X1.shape),
+ alpha=0.75, cmap=ListedColormap(('red', 'green')))
+plt.xlim(X1.min(), X1.max())
+plt.ylim(X2.min(), X2.max())
+for i, j in enumerate(np.unique(y_set)):
+          plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
+ c=ListedColormap(('red', 'green'))(i), label=j)
+plt.title('Logistic Regression (Test set with PCA)')
+plt.xlabel('PC1')
+plt.ylabel('PC2')
+plt.legend()
+plt.show()
+        </code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer2')">Copy</button>
+      </div>
+    </details>
+  </div>
+
+  <div class="faq-item">
+    <details>
+      <summary>Practical 3: Write a program To implement the K-NN Analysis model for classificaction in machine learning 
+using Python language</summary>
+      <div class="answer">
+        <pre id="answer3"><code>
+import pandas as pd 
+import numpy as np
+import matplotlib.pyplot as plt 
+import seaborn as sns
+from sklearn.model_selection import train_test_split, cross_val_score 
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metricsimport accuracy_score, classification_report, confusion_matrix 
+data = pd.read_csv('IRIS.csv')
+X = data.iloc[:, :-1]
+y = data.iloc[:, -1] 
+le = LabelEncoder()
+y_encoded = le.fit_transform(y)
+X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.2, random_state=42) 
+k = 5
+knn = KNeighborsClassifier(n_neighbors=k) 
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+print(f"\nAccuracy: {accuracy_score(y_test, y_pred):.2f}") 
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=le.classes_)) 
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+def plot_decision_boundary(X, y, title, k=3):
+          X_vis = X.iloc[:, :2]
+y_encoded = LabelEncoder().fit_transform(y) 
+model = KNeighborsClassifier(n_neighbors=k) 
+model.fit(X_vis, y_encoded)
+h = 0.02
+x_min, x_max = X_vis.iloc[:, 0].min() - 1, X_vis.iloc[:, 0].max() + 1
+y_min, y_max = X_vis.iloc[:, 1].min() - 1, X_vis.iloc[:, 1].max() + 1 
+xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+np.arange(y_min, y_max, h))
+Z = model.predict(np.c_[xx.ravel(), yy.ravel()]) 
+Z = Z.reshape(xx.shape) 
+plt.figure(figsize=(8,6))
+plt.contourf(xx, yy, Z, alpha=0.4, cmap=plt.cm.coolwarm)
+plt.scatter(X_vis.iloc[:, 0], X_vis.iloc[:, 1], c=y_encoded, cmap=plt.cm.coolwarm, edgecolors='k') 
+plt.xlabel(X_vis.columns[0])
+plt.ylabel(X_vis.columns[1]) 
+plt.title(title)
+plt.show()
+plot_decision_boundary(X, y, title="K-NN Decision Boundary (First 2 Features)", k=3) 
+accuracy_list = []
+k_range = range(1, 21) 
+for k in k_range:
+knn_k = KNeighborsClassifier(n_neighbors=k) 
+knn_k.fit(X_train, y_train)
+y_kpred = knn_k.predict(X_test) 
+accuracy_list.append(accuracy_score(y_test, y_kpred))
+plt.figure(figsize=(8,6))
+plt.plot(k_range, accuracy_list, marker='o', linestyle='-', color='blue') 
+plt.title("Accuracy vs Number of Neighbors (k)")
+plt.xlabel("k") 
+plt.ylabel("Accuracy") 
+plt.xticks(k_range) 
+plt.grid()
+plt.show() 
+k = 5
+knn_cv = KNeighborsClassifier(n_neighbors=k)
+cv_scores = cross_val_score(knn_cv, X, y_encoded, cv=10)
+print(f"\nCross-Validation Accuracy (k={k}): {cv_scores.mean():.2f} ± {cv_scores.std():.2f}") 
+df_viz = data.copy()
+sns.pairplot(df_viz, hue="species", palette="Set2") 
+plt.suptitle("Seaborn Pairplot of IRIS Dataset", y=1.02) 
+plt.show()
+        </code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer3')">Copy</button>
+      </div>
+    </details>
+  </div>
+
+  <div class="faq-item">
+    <details>
+      <summary>Practical 3: Write a program To implement the K-NN Analysis model for Regression in machine learning 
+using Python language</summary>
+      <div class="answer">
+        <pre id="answer4"><code>
+import pandas as pd 
+import numpy as np
+import matplotlib.pyplot as plt 
+import seaborn as sns
+from sklearn.model_selection import train_test_split, cross_val_score from 
+sklearn.neighbors import KNeighborsRegressor
+from sklearn.metricsimport mean_squared_error, r2_score data = 
+pd.read_csv('IRIS.csv')
+print("Columns:", data.columns) 
+target_column = 'petal_length'
+X = data.drop(columns=[target_column, 'species']) # Drop the target and categorical column y = 
+data[target_column]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42) k = 5
+knn_reg = KNeighborsRegressor(n_neighbors=k) knn_reg.fit(X_train, 
+y_train)
+y_pred = knn_reg.predict(X_test)
+print(f"\nMean Squared Error: {mean_squared_error(y_test, y_pred):.2f}") print(f"R² 
+Score: {r2_score(y_test, y_pred):.2f}")
+plt.figure(figsize=(8,6))
+plt.scatter(y_test, y_pred, color='blue', edgecolor='k') plt.plot([y.min(),
+y.max()], [y.min(), y.max()], 'r--', lw=2) plt.xlabel("Actual petal_length")
+ plt.ylabel("Predicted petal_length")
+plt.title(f"K-NN Regression (k={k}) - Actual vs Predicted") plt.grid()
+plt.show()
+k_range = range(1, 21) 
+mse_list = []
+for k in k_range:
+knn_r = KNeighborsRegressor(n_neighbors=k) knn_r.fit(X_train, 
+y_train)
+y_kpred = knn_r.predict(X_test) 
+mse_list.append(mean_squared_error(y_test, y_kpred))
+plt.figure(figsize=(8,6))
+plt.plot(k_range, mse_list, marker='o', color='green') plt.title("MSE vs
+Number of Neighbors (k) in K-NN Regression") plt.xlabel("k")
+plt.ylabel("Mean Squared Error") plt.grid()
+plt.show()
+        </code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer4')">Copy</button>
+      </div>
+    </details>
+  </div>
+
+  <div class="faq-item">
+    <details>
+      <summary>SVM Code Practical</summary>
+      <div class="answer">
+        <pre id="answer5"><code>
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn import svm
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+df = pd.read_csv('IRIS.csv')
+le = LabelEncoder()
+df['species'] = le.fit_transform(df['species'])
+X = df[['sepal_length', 'sepal_width']].values
+y = df['species'].values
+# Split into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+# Train the SVM model
+clf = svm.SVC(kernel='linear', C=1.0)
+clf.fit(X_train, y_train)
+# Predict and print classification report
+y_pred = clf.predict(X_test)
+print(classification_report(y_test, y_pred, target_names=le.classes_))
+# Plot decision boundary
+def plot_svm_boundary(X, y, model):
+ h = .02 # step size in the mesh
+x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+ y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+ xx, yy = np.meshgrid(
+ np.arange(x_min, x_max, h),
+ np.arange(y_min, y_max, h)
+ )
+ Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
+ Z = Z.reshape(xx.shape)
+ plt.figure(figsize=(10, 6))
+ plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.coolwarm)
+ sns.scatterplot(x=X[:, 0], y=X[:, 1], hue=le.inverse_transform(y), palette='deep', edgecolor='k')
+ plt.xlabel('Sepal Length')
+ plt.ylabel('Sepal Width')
+ plt.title('SVM Decision Boundary')
+ plt.show()
+plot_svm_boundary(X, y, clf)
+        </code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer5')">Copy</button>
+      </div>
+    </details>
+  </div>
+  
+  <div class="faq-item">
+    <details>
+      <summary>DNN Practical</summary>
+      <div class="answer">
+        <pre id="answer5"><code>
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Input
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_iris
+import matplotlib.pyplot as plt
+import os
+# Disable GPU to avoid CUDA errors
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+# Set random seed for reproducibility
+tf.random.set_seed(42)
+np.random.seed(42)
+# Load dataset
+data = load_iris()
+X = data.data
+y = data.target  # Multi-class target (0, 1, 2 for three iris species)
+
+# Convert labels to one-hot encoding for multi-class classification
+y = tf.keras.utils.to_categorical(y, num_classes=3)
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+# Feature scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Build DNN model
+model = Sequential([
+    Input(shape=(X_train.shape[1],)),  # Explicit Input layer
+    Dense(64, activation='relu'),
+    Dense(32, activation='relu'),
+    Dense(16, activation='relu'),
+    Dense(3, activation='softmax')  # 3 output neurons for 3 classes
+])
+
+# Compile model
+model.compile(optimizer='adam',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Train model with prefetch autotuning disabled to avoid RAM budget warning
+history = model.fit(X_train, y_train,
+                    epochs=50,
+                    batch_size=16,
+                    validation_split=0.2,
+                    verbose=1)
+
+# Evaluate model on test data
+loss, accuracy = model.evaluate(X_test, y_test, verbose=0)
+print(f"\nTest Accuracy: {accuracy * 100:.2f}%")
+
+# Plot training & validation accuracy and loss
+plt.figure(figsize=(12, 5))
+
+# Accuracy plot
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'], label='Train Accuracy', color='blue')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy', color='orange')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+
+# Loss plot
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='Train Loss', color='blue')
+plt.plot(history.history['val_loss'], label='Validation Loss', color='orange')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+plt.tight_layout()
+plt.show()
+        </code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer5')">Copy</button>
+      </div>
+    </details>
+  </div>
+  
+  <!-- <div class="faq-item">
+    <details>
+      <summary>5. How to check even or odd in Python?</summary>
+      <div class="answer">
+        <pre id="answer5"><code>number = int(input("Enter a number: "))
+if number % 2 == 0:
+    print("Even")
+else:
+    print("Odd")</code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer5')">Copy</button>
+      </div>
+    </details>
+  </div> -->
+
+  <script>
+    function copyToClipboard(id) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied to clipboard!");
+      }).catch(err => {
+        alert("Failed to copy: " + err);
+      });
+    }
+  </script>
+
+</body>
+</html>

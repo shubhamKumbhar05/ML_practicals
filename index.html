@@ -89,65 +89,64 @@ plt.show()
       <summary>Practical 2: Linear regression</summary>
       <div class="answer">
         <pre id="answer2"><code>
+import pandas as pd 
 import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt 
 import seaborn as sns
-dataset = pd.read_csv('IRIS.csv')
-print("Dataset Columns:", dataset.columns)
-if 'Id' in dataset.columns:
- dataset.drop('Id', axis=1, inplace=True)
-X = dataset.iloc[:, :-1].values
-y = dataset.iloc[:, -1].values
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-y = le.fit_transform(y)
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Load dataset with proper column names
+column_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
+data = pd.read_csv('iris.data.csv', header=None, names=column_names)
+print("Columns:", data.columns)
+print("\nFirst 5 rows:\n", data.head())
+
+# Define target and features
+target_column = 'petal_length'
+X = data.drop(columns=[target_column, 'species'])  # Drop target and categorical column
+y = data[target_column]
+
+# Split data into train/test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-classifier = LogisticRegression(random_state=0)
-classifier.fit(X_train, y_train)
-y_pred = classifier.predict(X_test)
-cm = confusion_matrix(y_test, y_pred)
-print("Confusion Matrix:\n", cm)
-pca = PCA(n_components=2)
-X_train_pca = pca.fit_transform(X_train)
-X_test_pca = pca.transform(X_test)
-from matplotlib.colors import ListedColormap
-X_set, y_set = X_train_pca, y_train
-X1, X2 = np.meshgrid(np.arange(start=X_set[:, 0].min()-1, stop=X_set[:, 0].max()+1, step=0.01),
- np.arange(start=X_set[:, 1].min()-1, stop=X_set[:, 1].max()+1, step=0.01))
-plt.contourf(X1, X2, classifier.predict(pca.inverse_transform(np.array([X1.ravel(), 
-X2.ravel()]).T)).reshape(X1.shape),
- alpha=0.75, cmap=ListedColormap(('red', 'green')))
-plt.xlim(X1.min(), X1.max())
-plt.ylim(X2.min(), X2.max())
-for i, j in enumerate(np.unique(y_set)):
- plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
- c=ListedColormap(('red', 'green'))(i), label=j)
-plt.title('Logistic Regression (Training set with PCA)')
-plt.xlabel('PC1')
-plt.ylabel('PC2')
-plt.legend()
+
+# Train K-NN regressor with k=5
+k = 5
+knn_reg = KNeighborsRegressor(n_neighbors=k)
+knn_reg.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = knn_reg.predict(X_test)
+print(f"\nMean Squared Error: {mean_squared_error(y_test, y_pred):.2f}") 
+print(f"R² Score: {r2_score(y_test, y_pred):.2f}")
+
+# Plot Actual vs Predicted
+plt.figure(figsize=(8,6))
+plt.scatter(y_test, y_pred, color='blue', edgecolors='k')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--', lw=2)
+plt.xlabel("Actual petal_length")
+plt.ylabel("Predicted petal_length")
+plt.title(f"K-NN Regression (k={k}) - Actual vs Predicted")
+plt.grid()
 plt.show()
-X_set, y_set = X_test_pca, y_test
-X1, X2 = np.meshgrid(np.arange(start=X_set[:, 0].min()-1, stop=X_set[:, 0].max()+1, step=0.01),
- np.arange(start=X_set[:, 1].min()-1, stop=X_set[:, 1].max()+1, step=0.01))
-plt.contourf(X1, X2, classifier.predict(pca.inverse_transform(np.array([X1.ravel(), 
-X2.ravel()]).T)).reshape(X1.shape),
- alpha=0.75, cmap=ListedColormap(('red', 'green')))
-plt.xlim(X1.min(), X1.max())
-plt.ylim(X2.min(), X2.max())
-for i, j in enumerate(np.unique(y_set)):
-          plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
- c=ListedColormap(('red', 'green'))(i), label=j)
-plt.title('Logistic Regression (Test set with PCA)')
-plt.xlabel('PC1')
-plt.ylabel('PC2')
-plt.legend()
+
+# Find best k by plotting MSE for k in range 1 to 20
+k_range = range(1, 21)
+mse_list = []
+
+for k in k_range:
+    knn_r = KNeighborsRegressor(n_neighbors=k)
+    knn_r.fit(X_train, y_train)
+    y_kpred = knn_r.predict(X_test)
+    mse_list.append(mean_squared_error(y_test, y_kpred))
+
+plt.figure(figsize=(8,6))
+plt.plot(k_range, mse_list, marker='o', color='green')
+plt.title("MSE vs Number of Neighbors (k) in K-NN Regression")
+plt.xlabel("k")
+plt.ylabel("Mean Squared Error")
+plt.grid()
 plt.show()
         </code></pre>
         <button class="copy-btn" onclick="copyToClipboard('answer2')">Copy</button>
@@ -168,49 +167,75 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split, cross_val_score 
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metricsimport accuracy_score, classification_report, confusion_matrix 
-data = pd.read_csv('IRIS.csv')
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix 
+
+# Load data
+data = pd.read_csv('iris.data.csv')
+
+# Features and target
 X = data.iloc[:, :-1]
 y = data.iloc[:, -1] 
+
+# Encode target labels
 le = LabelEncoder()
 y_encoded = le.fit_transform(y)
+
+# Split dataset into train and test
 X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.2, random_state=42) 
+
+# Train KNN classifier
 k = 5
 knn = KNeighborsClassifier(n_neighbors=k) 
 knn.fit(X_train, y_train)
+
+# Predict on test set
 y_pred = knn.predict(X_test)
+
+# Print evaluation metrics
 print(f"\nAccuracy: {accuracy_score(y_test, y_pred):.2f}") 
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred, target_names=le.classes_)) 
 print("Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
+
+# Function to plot decision boundary using first two features
 def plot_decision_boundary(X, y, title, k=3):
-          X_vis = X.iloc[:, :2]
-y_encoded = LabelEncoder().fit_transform(y) 
-model = KNeighborsClassifier(n_neighbors=k) 
-model.fit(X_vis, y_encoded)
-h = 0.02
-x_min, x_max = X_vis.iloc[:, 0].min() - 1, X_vis.iloc[:, 0].max() + 1
-y_min, y_max = X_vis.iloc[:, 1].min() - 1, X_vis.iloc[:, 1].max() + 1 
-xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-np.arange(y_min, y_max, h))
-Z = model.predict(np.c_[xx.ravel(), yy.ravel()]) 
-Z = Z.reshape(xx.shape) 
-plt.figure(figsize=(8,6))
-plt.contourf(xx, yy, Z, alpha=0.4, cmap=plt.cm.coolwarm)
-plt.scatter(X_vis.iloc[:, 0], X_vis.iloc[:, 1], c=y_encoded, cmap=plt.cm.coolwarm, edgecolors='k') 
-plt.xlabel(X_vis.columns[0])
-plt.ylabel(X_vis.columns[1]) 
-plt.title(title)
-plt.show()
+    X_vis = X.iloc[:, :2]
+    y_encoded = LabelEncoder().fit_transform(y) 
+    model = KNeighborsClassifier(n_neighbors=k) 
+    model.fit(X_vis, y_encoded)
+    
+    h = 0.02  # step size in the mesh
+    x_min, x_max = X_vis.iloc[:, 0].min() - 1, X_vis.iloc[:, 0].max() + 1
+    y_min, y_max = X_vis.iloc[:, 1].min() - 1, X_vis.iloc[:, 1].max() + 1 
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+                         np.arange(y_min, y_max, h))
+    
+    Z = model.predict(np.c_[xx.ravel(), yy.ravel()]) 
+    Z = Z.reshape(xx.shape) 
+    
+    plt.figure(figsize=(8,6))
+    plt.contourf(xx, yy, Z, alpha=0.4, cmap=plt.cm.coolwarm)
+    plt.scatter(X_vis.iloc[:, 0], X_vis.iloc[:, 1], c=y_encoded, cmap=plt.cm.coolwarm, edgecolors='k') 
+    plt.xlabel(X_vis.columns[0])
+    plt.ylabel(X_vis.columns[1]) 
+    plt.title(title)
+    plt.show()
+
+# Plot decision boundary
 plot_decision_boundary(X, y, title="K-NN Decision Boundary (First 2 Features)", k=3) 
+
+# Evaluate accuracy for different k values
 accuracy_list = []
 k_range = range(1, 21) 
+
 for k in k_range:
-knn_k = KNeighborsClassifier(n_neighbors=k) 
-knn_k.fit(X_train, y_train)
-y_kpred = knn_k.predict(X_test) 
-accuracy_list.append(accuracy_score(y_test, y_kpred))
+    knn_k = KNeighborsClassifier(n_neighbors=k) 
+    knn_k.fit(X_train, y_train)
+    y_kpred = knn_k.predict(X_test) 
+    accuracy_list.append(accuracy_score(y_test, y_kpred))
+
+# Plot accuracy vs k
 plt.figure(figsize=(8,6))
 plt.plot(k_range, accuracy_list, marker='o', linestyle='-', color='blue') 
 plt.title("Accuracy vs Number of Neighbors (k)")
@@ -219,10 +244,14 @@ plt.ylabel("Accuracy")
 plt.xticks(k_range) 
 plt.grid()
 plt.show() 
+
+# Cross-validation for k=5
 k = 5
 knn_cv = KNeighborsClassifier(n_neighbors=k)
 cv_scores = cross_val_score(knn_cv, X, y_encoded, cv=10)
 print(f"\nCross-Validation Accuracy (k={k}): {cv_scores.mean():.2f} ± {cv_scores.std():.2f}") 
+
+# Visualize the dataset with pairplot
 df_viz = data.copy()
 sns.pairplot(df_viz, hue="species", palette="Set2") 
 plt.suptitle("Seaborn Pairplot of IRIS Dataset", y=1.02) 
@@ -294,37 +323,56 @@ from sklearn import svm
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
-df = pd.read_csv('IRIS.csv')
+
+# Load dataset with proper column names
+column_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
+df = pd.read_csv('iris.data.csv', header=None, names=column_names)
+
+# Encode class labels (species)
 le = LabelEncoder()
 df['species'] = le.fit_transform(df['species'])
+
+# Select features and target
 X = df[['sepal_length', 'sepal_width']].values
 y = df['species'].values
+
 # Split into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-# Train the SVM model
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42)
+
+# Train the SVM model with linear kernel
 clf = svm.SVC(kernel='linear', C=1.0)
 clf.fit(X_train, y_train)
+
 # Predict and print classification report
 y_pred = clf.predict(X_test)
 print(classification_report(y_test, y_pred, target_names=le.classes_))
-# Plot decision boundary
+
+# Function to plot decision boundary
 def plot_svm_boundary(X, y, model):
- h = .02 # step size in the mesh
-x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
- y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
- xx, yy = np.meshgrid(
- np.arange(x_min, x_max, h),
- np.arange(y_min, y_max, h)
- )
- Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
- Z = Z.reshape(xx.shape)
- plt.figure(figsize=(10, 6))
- plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.coolwarm)
- sns.scatterplot(x=X[:, 0], y=X[:, 1], hue=le.inverse_transform(y), palette='deep', edgecolor='k')
- plt.xlabel('Sepal Length')
- plt.ylabel('Sepal Width')
- plt.title('SVM Decision Boundary')
- plt.show()
+    h = .02  # step size in the mesh
+
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx, yy = np.meshgrid(
+        np.arange(x_min, x_max, h),
+        np.arange(y_min, y_max, h)
+    )
+
+    Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
+
+    plt.figure(figsize=(10, 6))
+    plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.coolwarm)
+    sns.scatterplot(x=X[:, 0], y=X[:, 1], hue=le.inverse_transform(y),
+                    palette='deep', edgecolor='k')
+    plt.xlabel('Sepal Length')
+    plt.ylabel('Sepal Width')
+    plt.title('SVM Decision Boundary')
+    plt.legend(title='Species')
+    plt.show()
+
+# Call the plot function
 plot_svm_boundary(X, y, clf)
         </code></pre>
         <button class="copy-btn" onclick="copyToClipboard('answer5')">Copy</button>

@@ -394,54 +394,62 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import load_iris
 import matplotlib.pyplot as plt
 import os
-# Disable GPU to avoid CUDA errors
+
+# Optional: Disable GPU (only if needed to avoid CUDA errors)
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
 # Set random seed for reproducibility
 tf.random.set_seed(42)
 np.random.seed(42)
-# Load dataset
-data = load_iris()
-X = data.data
-y = data.target  # Multi-class target (0, 1, 2 for three iris species)
 
-# Convert labels to one-hot encoding for multi-class classification
+# Load Iris dataset
+data = load_iris()
+X = data.data  # Features
+y = data.target  # Labels (0, 1, 2)
+
+# One-hot encode the labels (for multi-class classification)
 y = tf.keras.utils.to_categorical(y, num_classes=3)
 
-# Split dataset
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
+# Split into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
 # Feature scaling
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-# Build DNN model
+# Build the DNN model
 model = Sequential([
-    Input(shape=(X_train.shape[1],)),  # Explicit Input layer
-    Dense(64, activation='relu'),
-    Dense(32, activation='relu'),
-    Dense(16, activation='relu'),
-    Dense(3, activation='softmax')  # 3 output neurons for 3 classes
+    Input(shape=(X_train.shape[1],)),  # 4 features
+    Dense(64, activation='relu'),
+    Dense(32, activation='relu'),
+    Dense(16, activation='relu'),
+    Dense(3, activation='softmax')  # Output layer for 3 classes
 ])
 
-# Compile model
-model.compile(optimizer='adam',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
+# Compile the model
+model.compile(
+    optimizer='adam',
+    loss='categorical_crossentropy',
+    metrics=['accuracy']
+)
 
-# Train model with prefetch autotuning disabled to avoid RAM budget warning
-history = model.fit(X_train, y_train,
-                    epochs=50,
-                    batch_size=16,
-                    validation_split=0.2,
-                    verbose=1)
+# Train the model
+history = model.fit(
+    X_train, y_train,
+    epochs=50,
+    batch_size=16,
+    validation_split=0.2,
+    verbose=1
+)
 
-# Evaluate model on test data
+# Evaluate the model
 loss, accuracy = model.evaluate(X_test, y_test, verbose=0)
 print(f"\nTest Accuracy: {accuracy * 100:.2f}%")
 
-# Plot training & validation accuracy and loss
+# Plot training and validation accuracy/loss
 plt.figure(figsize=(12, 5))
 
 # Accuracy plot
@@ -461,6 +469,7 @@ plt.title('Model Loss')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend()
+
 plt.tight_layout()
 plt.show()
         </code></pre>

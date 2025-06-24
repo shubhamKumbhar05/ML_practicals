@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>FAQ with Copyable Answers</title>
+  <title>CP Copyable Practicals</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -46,38 +46,57 @@
 </head>
 <body>
 
-  <h2>Machine Learning Practicals</h2>
+  <h2>CP Practicals</h2>
 
   <div class="faq-item">
     <details>
-      <summary>Practical 1</summary>
+      <summary>Write a program to display Prime Numbers between 1-100, and check whether the given number is Prime or Not.</summary>
       <div class="answer">
         <pre id="answer1"><code>
-import numpy as np 
-import matplotlib.pyplot as plt 
-import pandas as pd
-dataset = pd.read_csv('salary.csv') 
-X = dataset[['YearsExperience']].values
-y = dataset[['Salary']].values
-from sklearn.model_selection import train_test_split 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 1/3, random_state = 0) 
- 
-from sklearn.linear_model import LinearRegression 
-regressor = LinearRegression() 
-regressor.fit(X_train, y_train) 
-y_pred = regressor.predict(X_test) 
-plt.scatter(X_train, y_train, color = 'red') 
-plt.plot(X_train, regressor.predict(X_train), color = 'blue') 
-plt.title('Salary vs Experience (Training set)') 
-plt.xlabel('Years of Experience') 
-plt.ylabel('Salary') 
-plt.show() 
-plt.scatter(X_test, y_test, color = 'red') 
-plt.plot(X_train, regressor.predict(X_train), color = 'blue') 
-plt.title('Salary vs Experience (Test set)') 
-plt.xlabel('Years of Experience')
-plt.ylabel('Salary') 
-plt.show()
+#include stdio.h
+
+int main() {
+    int i, j, num, isPrime;
+
+    // 1. Display prime numbers from 1 to 100
+    printf("Prime numbers between 1 and 100:\n");
+
+    for (i = 2; i <= 100; i++) {
+        isPrime = 1;  // assume i is prime
+        for (j = 2; j <= i / 2; j++) {
+            if (i % j == 0) {
+                isPrime = 0; // i is not prime
+                break;
+            }
+        }
+        if (isPrime == 1) {
+            printf("%d ", i);
+        }
+    }
+
+    // 2. Check if user-given number is prime
+    printf("\n\nEnter a number to check if it is prime: ");
+    scanf("%d", &num);
+
+    if (num <= 1) {
+        printf("%d is NOT a Prime Number.\n", num);
+    } else {
+        isPrime = 1;  // assume prime
+        for (i = 2; i <= num / 2; i++) {
+            if (num % i == 0) {
+                isPrime = 0; // not prime
+                break;
+            }
+        }
+        if (isPrime == 1) {
+            printf("%d is a Prime Number.\n", num);
+        } else {
+            printf("%d is NOT a Prime Number.\n", num);
+        }
+    }
+
+    return 0;
+}
         </code></pre>
         <button class="copy-btn" onclick="copyToClipboard('answer1')">Copy</button>
       </div>
@@ -86,69 +105,71 @@ plt.show()
 
   <div class="faq-item">
     <details>
-      <summary>Practical 2: Linear regression</summary>
+      <summary>Write a Program to perform Following operation: 
+1. Reverse of String 
+2.Reverse of Array 
+3.Concatenation of Two String</summary>
       <div class="answer">
         <pre id="answer2"><code>
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.decomposition import PCA
-import seaborn as sns
-dataset = pd.read_csv('IRIS.csv')
-print("Dataset Columns:", dataset.columns)
-if 'Id' in dataset.columns:
- dataset.drop('Id', axis=1, inplace=True)
-X = dataset.iloc[:, :-1].values
-y = dataset.iloc[:, -1].values
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-y = le.fit_transform(y)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-classifier = LogisticRegression(random_state=0)
-classifier.fit(X_train, y_train)
-y_pred = classifier.predict(X_test)
-cm = confusion_matrix(y_test, y_pred)
-print("Confusion Matrix:\n", cm)
-pca = PCA(n_components=2)
-X_train_pca = pca.fit_transform(X_train)
-X_test_pca = pca.transform(X_test)
-from matplotlib.colors import ListedColormap
-X_set, y_set = X_train_pca, y_train
-X1, X2 = np.meshgrid(np.arange(start=X_set[:, 0].min()-1, stop=X_set[:, 0].max()+1, step=0.01),
- np.arange(start=X_set[:, 1].min()-1, stop=X_set[:, 1].max()+1, step=0.01))
-plt.contourf(X1, X2, classifier.predict(pca.inverse_transform(np.array([X1.ravel(), 
-X2.ravel()]).T)).reshape(X1.shape),
- alpha=0.75, cmap=ListedColormap(('red', 'green')))
-plt.xlim(X1.min(), X1.max())
-plt.ylim(X2.min(), X2.max())
-for i, j in enumerate(np.unique(y_set)):
- plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
- c=ListedColormap(('red', 'green'))(i), label=j)
-plt.title('Logistic Regression (Training set with PCA)')
-plt.xlabel('PC1')
-plt.ylabel('PC2')
-plt.legend()
-plt.show()
-X_set, y_set = X_test_pca, y_test
-X1, X2 = np.meshgrid(np.arange(start=X_set[:, 0].min()-1, stop=X_set[:, 0].max()+1, step=0.01),
- np.arange(start=X_set[:, 1].min()-1, stop=X_set[:, 1].max()+1, step=0.01))
-plt.contourf(X1, X2, classifier.predict(pca.inverse_transform(np.array([X1.ravel(), 
-X2.ravel()]).T)).reshape(X1.shape),
- alpha=0.75, cmap=ListedColormap(('red', 'green')))
-plt.xlim(X1.min(), X1.max())
-plt.ylim(X2.min(), X2.max())
-for i, j in enumerate(np.unique(y_set)):
-plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
- c=ListedColormap(('red', 'green'))(i), label=j)
-plt.title('Logistic Regression (Test set with PCA)')
-plt.xlabel('PC1')
-plt.ylabel('PC2')
-plt.legend()
-plt.show()
+#include stdio.h
+#include string.h
+
+int main() {
+    // --------- 1. Reverse a String ---------
+    char str[100], temp;
+    int i, j;
+
+    printf("Enter a string to reverse: ");
+    gets(str); // use fgets if needed
+
+    j = strlen(str) - 1;
+
+    for (i = 0; i < j; i++, j--) {
+        temp = str[i];
+        str[i] = str[j];
+        str[j] = temp;
+    }
+
+    printf("Reversed string: %s\n\n", str);
+
+    // --------- 2. Reverse an Array ---------
+    int arr[100], n;
+
+    printf("Enter number of elements in array: ");
+    scanf("%d", &n);
+
+    printf("Enter %d elements:\n", n);
+    for (i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Reverse array logic
+    for (i = 0, j = n - 1; i < j; i++, j--) {
+        int tempNum = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tempNum;
+    }
+
+    printf("Reversed array: ");
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n\n");
+
+    // --------- 3. Concatenate Two Strings ---------
+    char str1[100], str2[100];
+
+    printf("Enter first string: ");
+    scanf(" %[^\n]", str1); // read with space
+    printf("Enter second string: ");
+    scanf(" %[^\n]", str2);
+
+    strcat(str1, str2); // Concatenate
+
+    printf("Concatenated string: %s\n", str1);
+
+    return 0;
+}
         </code></pre>
         <button class="copy-btn" onclick="copyToClipboard('answer2')">Copy</button>
       </div>
@@ -157,106 +178,77 @@ plt.show()
 
   <div class="faq-item">
     <details>
-      <summary>Practical 3: Write a program To implement the K-NN Analysis model for classificaction in machine learning 
-using Python language</summary>
+      <summary>Write a program to Implement Heap sort Algorithm.</summary>
       <div class="answer">
         <pre id="answer3"><code>
-import pandas as pd 
-import numpy as np
-import matplotlib.pyplot as plt 
-import seaborn as sns
-from sklearn.model_selection import train_test_split, cross_val_score 
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix 
+#include stdio.h
 
-# Load data
-data = pd.read_csv('iris.data.csv')
+void heapify(int arr[], int n, int i) {
+    int largest = i;         // Initialize largest as root
+    int left = 2 * i + 1;    // Left child index
+    int right = 2 * i + 2;   // Right child index
 
-# Features and target
-X = data.iloc[:, :-1]
-y = data.iloc[:, -1] 
+    // If left child is larger than root
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
 
-# Encode target labels
-le = LabelEncoder()
-y_encoded = le.fit_transform(y)
+    // If right child is larger than largest so far
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
 
-# Split dataset into train and test
-X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.2, random_state=42) 
+    // If largest is not root
+    if (largest != i) {
+        int temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
 
-# Train KNN classifier
-k = 5
-knn = KNeighborsClassifier(n_neighbors=k) 
-knn.fit(X_train, y_train)
+        // Recursively heapify the affected subtree
+        heapify(arr, n, largest);
+    }
+}
 
-# Predict on test set
-y_pred = knn.predict(X_test)
+// Main function to do heap sort
+void heapSort(int arr[], int n) {
+    // Step 1: Build max heap
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
 
-# Print evaluation metrics
-print(f"\nAccuracy: {accuracy_score(y_test, y_pred):.2f}") 
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred, target_names=le.classes_)) 
-print("Confusion Matrix:")
-print(confusion_matrix(y_test, y_pred))
+    // Step 2: Extract elements from heap one by one
+    for (int i = n - 1; i >= 0; i--) {
+        // Move current root to end
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
 
-# Function to plot decision boundary using first two features
-def plot_decision_boundary(X, y, title, k=3):
-    X_vis = X.iloc[:, :2]
-    y_encoded = LabelEncoder().fit_transform(y) 
-    model = KNeighborsClassifier(n_neighbors=k) 
-    model.fit(X_vis, y_encoded)
-    
-    h = 0.02  # step size in the mesh
-    x_min, x_max = X_vis.iloc[:, 0].min() - 1, X_vis.iloc[:, 0].max() + 1
-    y_min, y_max = X_vis.iloc[:, 1].min() - 1, X_vis.iloc[:, 1].max() + 1 
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-                         np.arange(y_min, y_max, h))
-    
-    Z = model.predict(np.c_[xx.ravel(), yy.ravel()]) 
-    Z = Z.reshape(xx.shape) 
-    
-    plt.figure(figsize=(8,6))
-    plt.contourf(xx, yy, Z, alpha=0.4, cmap=plt.cm.coolwarm)
-    plt.scatter(X_vis.iloc[:, 0], X_vis.iloc[:, 1], c=y_encoded, cmap=plt.cm.coolwarm, edgecolors='k') 
-    plt.xlabel(X_vis.columns[0])
-    plt.ylabel(X_vis.columns[1]) 
-    plt.title(title)
-    plt.show()
+        // Call heapify on reduced heap
+        heapify(arr, i, 0);
+    }
+}
 
-# Plot decision boundary
-plot_decision_boundary(X, y, title="K-NN Decision Boundary (First 2 Features)", k=3) 
+// Print array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; ++i)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
 
-# Evaluate accuracy for different k values
-accuracy_list = []
-k_range = range(1, 21) 
+int main() {
+    int arr[100], n;
 
-for k in k_range:
-    knn_k = KNeighborsClassifier(n_neighbors=k) 
-    knn_k.fit(X_train, y_train)
-    y_kpred = knn_k.predict(X_test) 
-    accuracy_list.append(accuracy_score(y_test, y_kpred))
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
 
-# Plot accuracy vs k
-plt.figure(figsize=(8,6))
-plt.plot(k_range, accuracy_list, marker='o', linestyle='-', color='blue') 
-plt.title("Accuracy vs Number of Neighbors (k)")
-plt.xlabel("k") 
-plt.ylabel("Accuracy") 
-plt.xticks(k_range) 
-plt.grid()
-plt.show() 
+    printf("Enter %d elements:\n", n);
+    for (int i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
 
-# Cross-validation for k=5
-k = 5
-knn_cv = KNeighborsClassifier(n_neighbors=k)
-cv_scores = cross_val_score(knn_cv, X, y_encoded, cv=10)
-print(f"\nCross-Validation Accuracy (k={k}): {cv_scores.mean():.2f} ± {cv_scores.std():.2f}") 
+    heapSort(arr, n);
 
-# Visualize the dataset with pairplot
-df_viz = data.copy()
-sns.pairplot(df_viz, hue="species", palette="Set2") 
-plt.suptitle("Seaborn Pairplot of IRIS Dataset", y=1.02) 
-plt.show()
+    printf("Sorted array using Heap Sort:\n");
+    printArray(arr, n);
+
+    return 0;
+}
         </code></pre>
         <button class="copy-btn" onclick="copyToClipboard('answer3')">Copy</button>
       </div>
@@ -265,69 +257,86 @@ plt.show()
 
   <div class="faq-item">
     <details>
-      <summary>Practical 3: Write a program To implement the K-NN Analysis model for Regression in machine learning 
-using Python language</summary>
+      <summary>Write a program to Solve N-Queen Problem (4 Queen & 8 Queen).</summary>
       <div class="answer">
         <pre id="answer4"><code>
-import pandas as pd 
-import numpy as np
-import matplotlib.pyplot as plt 
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.metrics import mean_squared_error, r2_score
+#include stdio.h
+#include stdbool.h
 
-# Load dataset with proper column names
-column_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
-data = pd.read_csv('iris.data.csv', header=None, names=column_names)
-print("Columns:", data.columns)
-print("\nFirst 5 rows:\n", data.head())
+#define MAX 20  // Maximum board size
 
-# Define target and features
-target_column = 'petal_length'
-X = data.drop(columns=[target_column, 'species'])  # Drop target and categorical column
-y = data[target_column]
+int board[MAX][MAX];
+int N;
 
-# Split data into train/test sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+// Function to print the board
+void printBoard() {
+    printf("\nSolution for %d-Queen:\n", N);
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            printf("%d ", board[i][j]);
+        }
+        printf("\n");
+    }
+}
 
-# Train K-NN regressor with k=5
-k = 5
-knn_reg = KNeighborsRegressor(n_neighbors=k)
-knn_reg.fit(X_train, y_train)
+// Check if placing queen at board[row][col] is safe
+bool isSafe(int row, int col) {
+    int i, j;
 
-# Predict and evaluate
-y_pred = knn_reg.predict(X_test)
-print(f"\nMean Squared Error: {mean_squared_error(y_test, y_pred):.2f}") 
-print(f"R² Score: {r2_score(y_test, y_pred):.2f}")
+    // Check this row on the left
+    for (i = 0; i < col; i++)
+        if (board[row][i])
+            return false;
 
-# Plot Actual vs Predicted
-plt.figure(figsize=(8,6))
-plt.scatter(y_test, y_pred, color='blue', edgecolors='k')
-plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--', lw=2)
-plt.xlabel("Actual petal_length")
-plt.ylabel("Predicted petal_length")
-plt.title(f"K-NN Regression (k={k}) - Actual vs Predicted")
-plt.grid()
-plt.show()
+    // Check upper diagonal on left
+    for (i = row, j = col; i >= 0 && j >= 0; i--, j--)
+        if (board[i][j])
+            return false;
 
-# Find best k by plotting MSE for k in range 1 to 20
-k_range = range(1, 21)
-mse_list = []
+    // Check lower diagonal on left
+    for (i = row, j = col; i < N && j >= 0; i++, j--)
+        if (board[i][j])
+            return false;
 
-for k in k_range:
-    knn_r = KNeighborsRegressor(n_neighbors=k)
-    knn_r.fit(X_train, y_train)
-    y_kpred = knn_r.predict(X_test)
-    mse_list.append(mean_squared_error(y_test, y_kpred))
+    return true;
+}
 
-plt.figure(figsize=(8,6))
-plt.plot(k_range, mse_list, marker='o', color='green')
-plt.title("MSE vs Number of Neighbors (k) in K-NN Regression")
-plt.xlabel("k")
-plt.ylabel("Mean Squared Error")
-plt.grid()
-plt.show()
+// Recursive function to solve N-Queen
+bool solveNQUtil(int col) {
+    if (col >= N)
+        return true;  // All queens placed
+
+    for (int i = 0; i < N; i++) {
+        if (isSafe(i, col)) {
+            board[i][col] = 1;  // Place queen
+
+            if (solveNQUtil(col + 1))
+                return true;
+
+            board[i][col] = 0;  // BACKTRACK
+        }
+    }
+
+    return false;  // No place found
+}
+
+int main() {
+    printf("Enter number of queens (e.g., 4 or 8): ");
+    scanf("%d", &N);
+
+    // Initialize board to 0
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
+            board[i][j] = 0;
+
+    // Try to solve
+    if (solveNQUtil(0))
+        printBoard();
+    else
+        printf("No solution exists for %d-Queens.\n", N);
+
+    return 0;
+}
         </code></pre>
         <button class="copy-btn" onclick="copyToClipboard('answer4')">Copy</button>
       </div>
@@ -336,68 +345,34 @@ plt.show()
 
   <div class="faq-item">
     <details>
-      <summary>SVM Code Practical</summary>
+      <summary>Write a program for Greatest Common Divisor(GCD).</summary>
       <div class="answer">
         <pre id="answer5"><code>
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn import svm
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
+#include stdio.h
 
-# Load dataset with proper column names
-column_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
-df = pd.read_csv('iris.data.csv', header=None, names=column_names)
+// Recursive function to calculate GCD
+int gcd(int a, int b) {
+    if (b == 0)
+        return a;           // base case
+    else
+        return gcd(b, a % b); // recursive step
+}
 
-# Encode class labels (species)
-le = LabelEncoder()
-df['species'] = le.fit_transform(df['species'])
+int main() {
+    int num1, num2;
 
-# Select features and target
-X = df[['sepal_length', 'sepal_width']].values
-y = df['species'].values
+    // Input two numbers
+    printf("Enter two numbers: ");
+    scanf("%d %d", &num1, &num2);
 
-# Split into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42)
+    // Call GCD function
+    int result = gcd(num1, num2);
 
-# Train the SVM model with linear kernel
-clf = svm.SVC(kernel='linear', C=1.0)
-clf.fit(X_train, y_train)
+    // Display result
+    printf("GCD of %d and %d is %d\n", num1, num2, result);
 
-# Predict and print classification report
-y_pred = clf.predict(X_test)
-print(classification_report(y_test, y_pred, target_names=le.classes_))
-
-# Function to plot decision boundary
-def plot_svm_boundary(X, y, model):
-    h = .02  # step size in the mesh
-
-    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-    xx, yy = np.meshgrid(
-        np.arange(x_min, x_max, h),
-        np.arange(y_min, y_max, h)
-    )
-
-    Z = model.predict(np.c_[xx.ravel(), yy.ravel()])
-    Z = Z.reshape(xx.shape)
-
-    plt.figure(figsize=(10, 6))
-    plt.contourf(xx, yy, Z, alpha=0.3, cmap=plt.cm.coolwarm)
-    sns.scatterplot(x=X[:, 0], y=X[:, 1], hue=le.inverse_transform(y),
-                    palette='deep', edgecolor='k')
-    plt.xlabel('Sepal Length')
-    plt.ylabel('Sepal Width')
-    plt.title('SVM Decision Boundary')
-    plt.legend(title='Species')
-    plt.show()
-
-# Call the plot function
-plot_svm_boundary(X, y, clf)
+    return 0;
+}
         </code></pre>
         <button class="copy-btn" onclick="copyToClipboard('answer5')">Copy</button>
       </div>
@@ -406,115 +381,310 @@ plot_svm_boundary(X, y, clf)
   
   <div class="faq-item">
     <details>
-      <summary>DNN Practical</summary>
+      <summary>Write a program for DFS Searching algorithm.</summary>
       <div class="answer">
-        <pre id="answer6"><code>
-import numpy as np
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Input
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import load_iris
-import matplotlib.pyplot as plt
-import os
+        <pre id="answer5"><code>
+#include stdio.h
 
-# Optional: Disable GPU (only if needed to avoid CUDA errors)
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
+int adj[10][10];    // Graph as adjacency matrix
+int visited[10];    // Track visited nodes
+int n;              // Number of vertices
 
-# Set random seed for reproducibility
-tf.random.set_seed(42)
-np.random.seed(42)
+// Recursive DFS function
+void dfs(int v) {
+    visited[v] = 1;           // Mark node as visited
+    printf("%d ", v);         // Print visited node
 
-# Load Iris dataset
-data = load_iris()
-X = data.data  # Features
-y = data.target  # Labels (0, 1, 2)
+    for (int i = 0; i < n; i++) {
+        if (adj[v][i] == 1 && visited[i] == 0) {
+            dfs(i);           // Visit connected unvisited node
+        }
+    }
+}
 
-# One-hot encode the labels (for multi-class classification)
-y = tf.keras.utils.to_categorical(y, num_classes=3)
+int main() {
+    int i, j, start;
 
-# Split into training and test sets
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
+    // Input number of vertices
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
 
-# Feature scaling
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+    // Input adjacency matrix
+    printf("Enter adjacency matrix:\n");
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            scanf("%d", &adj[i][j]);
 
-# Build the DNN model
-model = Sequential([
-    Input(shape=(X_train.shape[1],)),  # 4 features
-    Dense(64, activation='relu'),
-    Dense(32, activation='relu'),
-    Dense(16, activation='relu'),
-    Dense(3, activation='softmax')  # Output layer for 3 classes
-])
+    // Initialize visited array
+    for (i = 0; i < n; i++)
+        visited[i] = 0;
 
-# Compile the model
-model.compile(
-    optimizer='adam',
-    loss='categorical_crossentropy',
-    metrics=['accuracy']
-)
+    // Input starting node
+    printf("Enter starting vertex (0 to %d): ", n - 1);
+    scanf("%d", &start);
 
-# Train the model
-history = model.fit(
-    X_train, y_train,
-    epochs=50,
-    batch_size=16,
-    validation_split=0.2,
-    verbose=1
-)
+    // Start DFS
+    printf("DFS Traversal: ");
+    dfs(start);
 
-# Evaluate the model
-loss, accuracy = model.evaluate(X_test, y_test, verbose=0)
-print(f"\nTest Accuracy: {accuracy * 100:.2f}%")
-
-# Plot training and validation accuracy/loss
-plt.figure(figsize=(12, 5))
-
-# Accuracy plot
-plt.subplot(1, 2, 1)
-plt.plot(history.history['accuracy'], label='Train Accuracy', color='blue')
-plt.plot(history.history['val_accuracy'], label='Validation Accuracy', color='orange')
-plt.title('Model Accuracy')
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.legend()
-
-# Loss plot
-plt.subplot(1, 2, 2)
-plt.plot(history.history['loss'], label='Train Loss', color='blue')
-plt.plot(history.history['val_loss'], label='Validation Loss', color='orange')
-plt.title('Model Loss')
-plt.xlabel('Epoch')
-plt.ylabel('Loss')
-plt.legend()
-
-plt.tight_layout()
-plt.show()
+    return 0;
+}
         </code></pre>
         <button class="copy-btn" onclick="copyToClipboard('answer6')">Copy</button>
       </div>
     </details>
   </div>
   
-  <!-- <div class="faq-item">
+   <div class="faq-item">
     <details>
-      <summary>5. How to check even or odd in Python?</summary>
+      <summary>Write a program for BFS Searching algorithm.</summary>
       <div class="answer">
-        <pre id="answer5"><code>number = int(input("Enter a number: "))
-if number % 2 == 0:
-    print("Even")
-else:
-    print("Odd")</code></pre>
-        <button class="copy-btn" onclick="copyToClipboard('answer5')">Copy</button>
+        <pre id="answer7"><code>
+          
+#include stdio.h
+
+int adj[10][10];     // Adjacency matrix
+int visited[10];     // Visited array
+int queue[10];       // Queue for BFS
+int front = 0, rear = -1;
+int n;               // Number of vertices
+
+// BFS function
+void bfs(int start) {
+    int i, current;
+
+    // Enqueue the starting node
+    queue[++rear] = start;
+    visited[start] = 1;
+
+    while (front <= rear) {
+        current = queue[front++];     // Dequeue front element
+        printf("%d ", current);       // Visit current node
+
+        // Check all neighbours
+        for (i = 0; i < n; i++) {
+            if (adj[current][i] == 1 && visited[i] == 0) {
+                queue[++rear] = i;    // Enqueue connected node
+                visited[i] = 1;       // Mark as visited
+            }
+        }
+    }
+}
+
+int main() {
+    int i, j, start;
+
+    // Input number of vertices
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    // Input adjacency matrix
+    printf("Enter adjacency matrix:\n");
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            scanf("%d", &adj[i][j]);
+
+    // Initialize visited array
+    for (i = 0; i < n; i++)
+        visited[i] = 0;
+
+    // Input starting node
+    printf("Enter starting vertex (0 to %d): ", n - 1);
+    scanf("%d", &start);
+
+    // Start BFS
+    printf("BFS Traversal: ");
+    bfs(start);
+
+    return 0;
+}
+          
+        </code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer7')">Copy</button>
       </div>
     </details>
-  </div> -->
+  </div> 
+          
+  <div class="faq-item">
+    <details>
+      <summary>Write a program to Display minimum spanning tree using Prims Algorithm.</summary>
+      <div class="answer">
+        <pre id="answer8"><code>
+          
+#include stdio.h
+#define INF 9999  // A large number representing infinity
+
+int main() {
+    int adj[10][10];     // Adjacency matrix
+    int visited[10];     // Visited nodes
+    int n, i, j;
+    int no_of_edges = 0; // Count of MST edges
+    int min, x, y;
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter the adjacency matrix:\n");
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            scanf("%d", &adj[i][j]);
+            if (adj[i][j] == 0)
+                adj[i][j] = INF; // No edge = infinity
+        }
+        visited[i] = 0; // Mark all as unvisited
+    }
+
+    visited[0] = 1; // Start from vertex 0
+
+    printf("Edges in the Minimum Spanning Tree:\n");
+
+    while (no_of_edges < n - 1) {
+        min = INF;
+
+        for (i = 0; i < n; i++) {
+            if (visited[i]) {
+                for (j = 0; j < n; j++) {
+                    if (!visited[j] && adj[i][j] < min) {
+                        min = adj[i][j];
+                        x = i;
+                        y = j;
+                    }
+                }
+            }
+        }
+
+        printf("%d - %d : %d\n", x, y, min);
+        visited[y] = 1;
+        no_of_edges++;
+    }
+
+    return 0;
+}
+          
+        </code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer8')">Copy</button>
+      </div>
+    </details>
+  </div> 
+          
+  <div class="faq-item">
+    <details>
+      <summary>Write a Program for Travelling Sales Person Problem</summary>
+      <div class="answer">
+        <pre id="answer9"><code>
+          
+#include stdio.h
+#include limits.h
+
+int tsp(int graph[10][10], int visited[], int pos, int n, int count, int cost, int start) {
+    if (count == n && graph[pos][start]) {
+        return cost + graph[pos][start]; // return to starting point
+    }
+
+    int ans = INT_MAX;
+
+    for (int i = 0; i < n; i++) {
+        if (!visited[i] && graph[pos][i]) {
+            visited[i] = 1;
+            int temp = tsp(graph, visited, i, n, count + 1, cost + graph[pos][i], start);
+            if (temp < ans)
+                ans = temp;
+            visited[i] = 0; // backtrack
+        }
+    }
+
+    return ans;
+}
+
+int main() {
+    int graph[10][10], visited[10];
+    int n, i, j;
+
+    printf("Enter number of cities: ");
+    scanf("%d", &n);
+
+    printf("Enter cost matrix:\n");
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            scanf("%d", &graph[i][j]);
+
+    for (i = 0; i < n; i++)
+        visited[i] = 0;
+
+    visited[0] = 1; // start from city 0
+
+    int minCost = tsp(graph, visited, 0, n, 1, 0, 0);
+
+    printf("Minimum cost of TSP tour: %d\n", minCost);
+
+    return 0;
+}
+          
+        </code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer9')">Copy</button>
+      </div>
+    </details>
+  </div> 
+          
+  <div class="faq-item">
+    <details>
+      <summary>To Study Bi-coloring problem</summary>
+      <div class="answer">
+        <pre id="answer10"><code>
+          
+#include stdio.h
+
+int adj[10][10];    // Adjacency matrix
+int color[10];      // Color array (0 or 1)
+int n;              // Number of vertices
+
+// DFS function to check if graph is bipartite
+int isBipartite(int v, int c) {
+    color[v] = c;
+
+    for (int i = 0; i < n; i++) {
+        if (adj[v][i]) {
+            if (color[i] == c)
+                return 0;  // Same color conflict
+
+            if (color[i] == -1 && !isBipartite(i, 1 - c))
+                return 0;  // Recursive DFS
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int i, j;
+
+    // Input number of vertices
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    // Input adjacency matrix
+    printf("Enter adjacency matrix:\n");
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            scanf("%d", &adj[i][j]);
+
+    // Initialize colors to -1 (unvisited)
+    for (i = 0; i < n; i++)
+        color[i] = -1;
+
+    // Start from vertex 0, color = 0
+    if (isBipartite(0, 0))
+        printf("Graph is Bipartite (can be 2-colored).\n");
+    else
+        printf("Graph is NOT Bipartite.\n");
+
+    return 0;
+}
+          
+        </code></pre>
+        <button class="copy-btn" onclick="copyToClipboard('answer10')">Copy</button>
+      </div>
+    </details>
+  </div> 
 
   <script>
     function copyToClipboard(id) {
